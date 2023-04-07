@@ -17,7 +17,7 @@ return new class extends Migration
             $table->morphs('receiver');
             $table->morphs('sender');
             $table->json('last_message')->nullable();
-            $table->boolean('is_archived')->default(false);
+            $table->unsignedBigInteger('archived_by')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

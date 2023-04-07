@@ -87,11 +87,19 @@ class ChatController extends BaseController
     public function getChannels( Request $request )
     {
         $token = 123;
-        $chats = $this->chatRepositoryInterface->getChatChannels(2);
+        $chats = $this->chatRepositoryInterface->getChatChannels($this->userRepositoryInterface->getAuthUser($token));
         return $this->successResponse([
             "chats" => ChannelsResource::collection($chats),
         ]);
-        
+    }
+
+    public function getArchivedChannels ( Request $request )
+    {
+        $token = 123;
+        $chats = $this->chatRepositoryInterface->getArchivedChannels($this->userRepositoryInterface->getAuthUser($token));
+        return $this->successResponse([
+            "chats" => ChannelsResource::collection($chats),
+        ]);
     }
 
 }

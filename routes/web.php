@@ -17,7 +17,8 @@ $router->group( ['prefix' => 'api'], function () use ($router) {
     $router->group( ['prefix' => 'v1'], function () use ($router) {
         $router->group( ['prefix' => 'chat'], function () use ($router) {
                     $router->post('/send', 'ChatController@send');
-                    $router->get('/chats', 'ChatController@getChannels');
+                    $router->get('/channels', 'ChatController@getChannels');
+                    $router->get('/channels/archived', 'ChatController@getArchivedChannels');
                     $router->get('/messages', 'ChatController@getChats');
                 });
             }

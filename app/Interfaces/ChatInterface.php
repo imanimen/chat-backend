@@ -10,4 +10,5 @@ interface ChatInterface
     public function sendMessage($sendMessage, $channel_id, $receiver_id, $sender_id, $message, $fileIds = null);
     public function markAsRead($channel_id, $userId);
     public function getChatMessages($channel_id);
+    public function getArchivedChannels($user_id);
 }

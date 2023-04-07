@@ -11,7 +11,8 @@ class ChatRepository implements ChatInterface
     public function getChannel($user_id)
     {
         return Channel::where('sender_id', $user_id)
-            ->orWhere('reciever_id', $user_id)
+            ->orWhere('receiver_id', $user_id)
+            ->where('archived_by', '!=', $user_id)
             ->orderByDesc('updated_at')
             ->get();
     }
@@ -19,7 +20,8 @@ class ChatRepository implements ChatInterface
     public function getChatChannels($user_id)
     {
         return Channel::where('sender_id', $user_id)
-        ->get();
+            ->where('archived_by', null)
+            ->get();
     }
 
     public function createChannel($sender_id, $receiver_id )
@@ -38,12 +40,11 @@ class ChatRepository implements ChatInterface
             return $chatRoom;
         }
         return Channel::updateOrCreate([
-            'name' => "_" . $sender_id . "_" . $receiver_id,
+            'name' => env('REDIS_CHANNEL_NAME') . $sender_id . "_" . $receiver_id,
             'sender_id' => $sender_id,
             'sender_type' => User::class,
             'receiver_id' => $receiver_id,
             'receiver_type' => User::class,
-            'is_archived' => false,
         ]);
     }
 
@@ -56,7 +57,6 @@ class ChatRepository implements ChatInterface
             'sender_type' => User::class,
             'receiver_id' => $receiver_id,
             'receiver_type' => User::class,
-            'is_archived' => false,
             'message' => $message,
         ]);
 
@@ -79,5 +79,14 @@ class ChatRepository implements ChatInterface
     {
         $chatRoom = Channel::findOrFail($channel_id);
         return $chatRoom->chats;
+    }
+
+    public function getArchivedChannels($user_id)
+    {
+        return Channel::where('sender_id', $user_id)
+            ->orWhere('receiver_id', $user_id)
+            ->where('archived_by', $user_id)
+            ->orderByDesc('updated_at')
+            ->get();
     }
 }

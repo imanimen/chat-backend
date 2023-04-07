@@ -14,6 +14,7 @@ class Channel extends Model
     protected $table = 'chat_service_channels';
     protected $fillable = [
         'name',
+        'archived_by',
         'sender_type',
         'sender_id',
         'receiver_type',
