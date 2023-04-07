@@ -7,6 +7,7 @@ use App\Interfaces\ChatInterface;
 use App\Interfaces\UserInterface;
 use App\Jobs\CreateChatJob;
 use App\Jobs\MarkMessagesAsReadJob;
+use App\Transformers\ChannelsResource;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -86,12 +87,11 @@ class ChatController extends BaseController
     public function getChannels( Request $request )
     {
         $token = 123;
-        return Cache::remember('user_chat_channels_'.$token, 60, function () use ($token){
-            $chats = $this->chatRepositoryInterface->getChatChannels(2);
-            return $this->successResponse([
-                "chats" => $chats
-            ]);
-        });
+        $chats = $this->chatRepositoryInterface->getChatChannels(2);
+        return $this->successResponse([
+            "chats" => ChannelsResource::collection($chats),
+        ]);
+        
     }
 
 }

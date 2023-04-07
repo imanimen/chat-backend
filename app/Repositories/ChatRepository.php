@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Interfaces\ChatInterface;
 use App\Models\Channel;
 use App\Models\Chat;
-use Illuminate\Support\Facades\Validator;
 
 class ChatRepository implements ChatInterface
 {
