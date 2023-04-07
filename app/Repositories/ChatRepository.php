@@ -20,6 +20,7 @@ class ChatRepository implements ChatInterface
     public function getChatChannels($user_id)
     {
         return Channel::where('sender_id', $user_id)
+            ->orWhere('receiver_id', $user_id)
             ->where('archived_by', null)
             ->get();
     }
