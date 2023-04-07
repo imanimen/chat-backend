@@ -86,7 +86,7 @@ class ChatController extends BaseController
 
     public function getChannels( Request $request )
     {
-        $token = 123;
+        $token = $request->header('Authorization');
         $chats = $this->chatRepositoryInterface->getChatChannels($this->userRepositoryInterface->getAuthUser($token));
         return $this->successResponse([
             "chats" => ChannelsResource::collection($chats),
@@ -95,11 +95,29 @@ class ChatController extends BaseController
 
     public function getArchivedChannels ( Request $request )
     {
-        $token = 123;
+        $token = $request->header('Authorization');
         $chats = $this->chatRepositoryInterface->getArchivedChannels($this->userRepositoryInterface->getAuthUser($token));
         return $this->successResponse([
             "chats" => ChannelsResource::collection($chats),
         ]);
+    }
+
+    public function archive( Request $request)
+    {
+        $token = $request->header('Authorization');
+        $chats = $this->chatRepositoryInterface->archiveChat($this->userRepositoryInterface->getAuthUser($token));
+        return $this->successResponse([
+            "archived" => $chats
+        ]);   
+    }
+
+    public function unArchive( Request $request )
+    {
+        $token = $request->header('Authorization');
+        $chats = $this->chatRepositoryInterface->unArchiveChat($this->userRepositoryInterface->getAuthUser($token));
+        return $this->successResponse([
+            "uarchived" => $chats
+        ]);   
     }
 
 }

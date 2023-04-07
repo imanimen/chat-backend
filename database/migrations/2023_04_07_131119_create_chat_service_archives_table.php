@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('chat_service_channels', function (Blueprint $table) {
+        Schema::create('chat_service_archives', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->morphs('receiver');
-            $table->morphs('sender');
-            $table->json('last_message')->nullable();
-            $table->softDeletes();
+            $table->foreignId('channel_id')->constrained('chat_service_channels')->onDelete('cascade');
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('chat_service_channels');
+        Schema::dropIfExists('chat_service_archives');
     }
 };

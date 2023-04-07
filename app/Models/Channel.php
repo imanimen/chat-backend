@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Chat;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Channel extends Model
@@ -14,7 +15,6 @@ class Channel extends Model
     protected $table = 'chat_service_channels';
     protected $fillable = [
         'name',
-        'archived_by',
         'sender_type',
         'sender_id',
         'receiver_type',
@@ -25,5 +25,11 @@ class Channel extends Model
     protected function chats(): HasMany
     {
         return $this->hasMany(Chat::class);
+    }
+
+    public function archivedByUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'chat_service_archives')
+            ->withTimestamps();
     }
 }

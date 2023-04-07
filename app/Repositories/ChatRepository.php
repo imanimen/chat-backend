@@ -3,8 +3,10 @@
 namespace App\Repositories;
 
 use App\Interfaces\ChatInterface;
+use App\Models\Archive;
 use App\Models\Channel;
 use App\Models\Chat;
+use App\Models\User;
 
 class ChatRepository implements ChatInterface
 {
@@ -78,8 +80,8 @@ class ChatRepository implements ChatInterface
 
     public function getChatMessages($channel_id)
     {
-        $chatRoom = Channel::findOrFail($channel_id);
-        return $chatRoom->chats;
+        $channel= Channel::findOrFail($channel_id);
+        return $channel->chats;
     }
 
     public function getArchivedChannels($user_id)
@@ -89,5 +91,50 @@ class ChatRepository implements ChatInterface
             ->where('archived_by', $user_id)
             ->orderByDesc('updated_at')
             ->get();
+    }
+
+    public function archiveChat($user_id)
+    {
+        $channel = Channel::query()
+            ->where('sender_id', $user_id)
+            ->orWhere('receiver_id', $user_id)
+            ->first();
+    
+        $archive = Archive::query()
+            ->where('channel_id', $channel->id)
+            ->where('user_id', $user_id)
+            ->first();
+
+        if ($archive) {
+            return false;
+        }
+
+        $a_ch = Archive::query()->create([
+            'channel_id' => $channel->id,
+            'user_id' => $user_id
+        ]);
+        return true;
+    }
+
+    public function unArchiveChat($user_id)
+    {
+        $channel = Channel::query()
+            ->where('sender_id', $user_id)
+            ->orWhere('receiver_id', $user_id)
+            ->first();
+        
+        $archive = Archive::query()
+            ->where('channel_id', $channel->id)
+            ->where('user_id', $user_id)
+            ->first();
+    
+        if ($archive) {
+            // If the user has archived the channel, unarchive it by deleting the archive record
+            $archive->delete();
+            return true;
+        }
+    
+        // If the user has not archived the channel, return false
+        return false;
     }
 }

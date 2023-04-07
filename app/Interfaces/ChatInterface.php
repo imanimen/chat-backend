@@ -11,4 +11,7 @@ interface ChatInterface
     public function markAsRead($channel_id, $userId);
     public function getChatMessages($channel_id);
     public function getArchivedChannels($user_id);
+    public function archiveChat($user_id);
+    public function unArchiveChat($user_id);
+
 }
