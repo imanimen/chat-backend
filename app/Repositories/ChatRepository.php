@@ -14,16 +14,21 @@ class ChatRepository implements ChatInterface
     {
         return Channel::where('sender_id', $user_id)
             ->orWhere('receiver_id', $user_id)
-            ->where('archived_by', '!=', $user_id)
             ->orderByDesc('updated_at')
             ->get();
     }
 
     public function getChatChannels($user_id)
     {
-        return Channel::where('sender_id', $user_id)
-            ->orWhere('receiver_id', $user_id)
-            ->where('archived_by', null)
+        $subquery = Archive::select('channel_id')
+            ->where('user_id', $user_id);
+
+        return Channel::where(function ($query) use ($user_id) {
+                $query->where('sender_id', $user_id)
+                    ->orWhere('receiver_id', $user_id);
+            })
+            ->whereNotIn('id', $subquery)
+            ->orderByDesc('updated_at')
             ->get();
     }
 
@@ -86,9 +91,13 @@ class ChatRepository implements ChatInterface
 
     public function getArchivedChannels($user_id)
     {
-        return Channel::where('sender_id', $user_id)
-            ->orWhere('receiver_id', $user_id)
-            ->where('archived_by', $user_id)
+        return Channel::select('chat_service_channels.*', 'chat_service_archives.user_id')
+            ->leftJoin('chat_service_archives', 'chat_service_channels.id', '=', 'chat_service_archives.channel_id')
+            ->where(function ($query) use ($user_id) {
+                $query->where('sender_id', $user_id)
+                    ->orWhere('receiver_id', $user_id);
+            })
+            ->whereNotNull('chat_service_archives.user_id')
             ->orderByDesc('updated_at')
             ->get();
     }

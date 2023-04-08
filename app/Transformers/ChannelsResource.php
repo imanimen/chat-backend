@@ -12,8 +12,7 @@ class ChannelsResource extends JsonResource
             'id' => $this->id,
             'name' => env('REDIS_CHANNEL_NAME').'sender_' . $this->sender_id . '_receiver_' . $this->receiver_id,
             'type' => $this->sender_type,
-            'archived_by' => $this->archived_by,
-            'last_message' => $this->last_message
+            'last_message' => json_decode($this->last_message)
         ];
     }
 
